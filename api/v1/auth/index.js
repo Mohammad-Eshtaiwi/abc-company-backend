@@ -8,9 +8,7 @@ router.post("/signup", async (req, res) => {
     res.json(result);
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .json({ status: 500, message: "something went wrong", data: [] });
+    res.status(500).json({ status: 500, message: "something went wrong", data: [] });
   }
 });
 router.post("/login", async (req, res) => {
@@ -19,9 +17,7 @@ router.post("/login", async (req, res) => {
     res.json(result);
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .json({ status: 500, message: "something went wrong", data: [] });
+    res.status(500).json({ status: 500, message: "something went wrong", data: [] });
   }
 });
 

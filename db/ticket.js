@@ -30,9 +30,9 @@ const ticketSchema = new mongoose.Schema({
   },
   status: {
     type: Number,
-    required: true,
     min: 1,
     max: 3,
+    default: 1,
   },
   type: {
     type: Number,

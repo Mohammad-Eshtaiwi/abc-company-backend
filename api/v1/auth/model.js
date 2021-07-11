@@ -8,8 +8,7 @@ async function signup(req) {
   try {
     //   validate user input
     const validate = validateSchemas(req.body, authSchemas.joiUserSchema);
-    if (validate.error)
-      throw { status: 401, message: validate.error.message, data: [] };
+    if (validate.error) throw { status: 401, message: validate.error.message, data: [] };
 
     // encrypt the password before saving it into the database
     try {
@@ -20,18 +19,17 @@ async function signup(req) {
     }
     // check if the user exist or not
     findUser = await User.findOne({ username: req.body.username }).lean();
-    if (findUser)
-      return { status: 401, message: "username is already used", data: [] };
+    if (findUser) return { status: 401, message: "username is already used", data: [] };
     // add new user
     addUser = new User({
       username: req.body.username,
       password: req.password,
+      isAdmin: req.body.isAdmin ? req.body.isAdmin : false,
     });
     await addUser.save();
     return { status: 201, message: "created", data: [] };
   } catch (error) {
-    if (!error.status)
-      return { status: 500, message: "something went wrong", data: [] };
+    if (!error.status) return { status: 500, message: "something went wrong", data: [] };
     return error;
   }
 }
@@ -39,8 +37,7 @@ async function login(req) {
   try {
     //   validate user input
     const validate = validateSchemas(req.body, authSchemas.joiUserSchema);
-    if (validate.error)
-      throw { status: 401, message: validate.error.message, data: [] };
+    if (validate.error) throw { status: 401, message: validate.error.message, data: [] };
     // check if the user exist or not
     findUser = await User.findOne({ username: req.body.username }).lean();
     if (!findUser)
@@ -57,15 +54,16 @@ async function login(req) {
         message: "username or password is not correct",
         data: [],
       };
-    const token = jwt.sign(
-      { username: findUser.username, isAdmin: findUser.isAdmin },
-      process.env.TOKEN_SECRET,
-      { expiresIn: "24h" }
-    );
-    return { status: 201, message: "created", data: [{ token }] };
+    const token = jwt.sign({ username: findUser.username, isAdmin: findUser.isAdmin }, process.env.TOKEN_SECRET, {
+      expiresIn: "24h",
+    });
+    return {
+      status: 201,
+      message: "created",
+      data: [{ token, username: findUser.username, isAdmin: findUser.isAdmin }],
+    };
   } catch (error) {
-    if (!error.status)
-      return { status: 500, message: "something went wrong", data: [] };
+    if (!error.status) return { status: 500, message: "something went wrong", data: [] };
     return error;
   }
 }

@@ -6,18 +6,12 @@ async function authenticateToken(req, res, next) {
   const token = authHeader && authHeader.split(" ")[1];
 
   // if there is no token reject the request
-  if (!token)
-    return res
-      .status(401)
-      .json({ status: 403, message: "unauthorized", data: [] });
+  if (!token) return res.status(401).json({ status: 403, message: "unauthorized", data: [] });
 
   // if there is not verified token reject the request
   const payload = jwt.verify(token, process.env.TOKEN_SECRET);
   if (!payload) {
-    console.log("hiii its meee hahhahah");
-    return res
-      .status(401)
-      .json({ status: 403, message: "unauthorized", data: [] });
+    return res.status(401).json({ status: 403, message: "unauthorized", data: [] });
   }
 
   req.payload = { isAdmin: payload.isAdmin, username: payload.username };

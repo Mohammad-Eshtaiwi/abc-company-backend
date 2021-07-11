@@ -43,7 +43,8 @@ async function getTicket(req) {
   try {
     let ticket;
     // if users is not admin and trying to access ticket that not belong to them
-    if (!req.payload.isAdmin) ticket = await Ticket.find({ id: req.params.id, createdBy: req.payload.username }).lean();
+    if (!req.payload.isAdmin)
+      ticket = await Ticket.find({ _id: req.params.id, createdBy: req.payload.username }).lean();
     if (req.payload.isAdmin) ticket = await Ticket.find({ _id: req.params.id }).lean();
     // if no tickets found or wrong
     if (!ticket.length) return { status: 404, message: "not found", data: [] };
@@ -61,7 +62,7 @@ async function updateStatus(req) {
     const validate = validateSchemas({ ...req.body, id: req.params.id }, ticketStatusSchema);
     if (validate.error) throw { status: 401, message: validate.error.message, data: [] };
     await Ticket.updateOne(
-      { id: req.body.id },
+      { _id: req.params.id },
       {
         status: req.body.status,
         closedAt: [2, 3].includes(req.body.status) ? Date.now() : null,
